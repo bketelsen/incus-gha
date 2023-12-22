@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: lxc/distrobuilder
+          path: distrobuilder
       - name: Build distrobuilder
         run: cd distrobuilder && make
       - name: Add distrobuilder to path  
