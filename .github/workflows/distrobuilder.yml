@@ -14,10 +14,10 @@ jobs:
       - uses: actions/checkout@master
         with:
           repository: lxc/distrobuilder
-      - run: pushd distrobuilder
+      - run: cd distrobuilder
       - run: go env
       - run: make
-      - run: popd
+      - run: cd ${{ github.workspace }}
       - name: Adding distrobuilder to path  
         run: echo "/home/runner/go/bin" >> $GITHUB_PATH
       - name: Build Incus Image
