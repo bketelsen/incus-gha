@@ -2,7 +2,7 @@ name: Build Incus Image
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Build-Incus-Image:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt update && sudo apt install -y debootstrap rsync gpg squashfs-tools git
@@ -14,11 +14,10 @@ jobs:
       - uses: actions/checkout@master
         with:
           repository: lxc/distrobuilder
-      - run: cd distrobuilder
+      - run: pushd distrobuilder
       - run: go env
       - run: make
-      - run: ls -la /home/runner/go
-      - run: go version
+      - run: popd
       - name: Adding distrobuilder to path  
         run: echo "/home/runner/go/bin" >> $GITHUB_PATH
       - name: Build Incus Image
