@@ -11,17 +11,18 @@ jobs:
           go-version: '1.21.5' 
       - name: Check out repository code
         uses: actions/checkout@v4
-      - uses: actions/checkout@master
+      - name: Check out distrobuilder code
+        uses: actions/checkout@master
         with:
           repository: lxc/distrobuilder
-      - run: cd distrobuilder
-      - run: go env
-      - run: make
-      - run: cd ${{ github.workspace }}
-      - name: Adding distrobuilder to path  
+      - name: Build distrobuilder
+        run: cd distrobuilder && make
+      - name: Add distrobuilder to path  
         run: echo "/home/runner/go/bin" >> $GITHUB_PATH
       - name: Build Incus Image
         run: |
+          cd ${{ github.workspace }}
+          pwd
           sudo /home/runner/go/bin/distrobuilder build-incus ubuntunocloud.yaml ubuntunocloud
       - name: List files in the repository
         run: |
