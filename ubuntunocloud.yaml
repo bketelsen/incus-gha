@@ -2,9 +2,9 @@ image:
   name: ubuntu-disco-x86_64
   distribution: ubuntu
   release: jammy
-  variant: default
+  variant: cloud
   description: |-
-    Blincus custom build Ubuntu {{ image.release }}
+    Ubuntu {{ image.release }}
   architecture: x86_64
 
 source:
@@ -93,44 +93,156 @@ files:
   variants:
   - default
 
+- path: /etc/netplan/10-lxc.yaml
+  generator: dump
+  content: |-
+    network:
+      version: 2
+      ethernets:
+        enp5s0:
+          dhcp4: true
+          dhcp-identifier: mac
+  releases:
+  - bionic
+  - eoan
+  - focal
+  - groovy
+  - hirsute
+  - impish
+  - jammy
+  types:
+  - vm
+  variants:
+  - default
+
+- name: meta-data
+  generator: cloud-init
+  variants:
+  - cloud
+
+- name: network-config
+  generator: cloud-init
+  variants:
+  - cloud
+
+- name: user-data
+  generator: cloud-init
+  variants:
+  - cloud
+
+- name: vendor-data
+  generator: cloud-init
+  variants:
+  - cloud
+
+- name: ext4
+  generator: fstab
+  types:
+  - vm
+
+- name: incus-agent
+  generator: incus-agent
+  types:
+  - vm
+
+- path: /etc/default/grub.d/50-incus.cfg
+  generator: dump
+  content: |-
+    GRUB_RECORDFAIL_TIMEOUT=0
+    GRUB_TIMEOUT=0
+    GRUB_CMDLINE_LINUX_DEFAULT="${GRUB_CMDLINE_LINUX_DEFAULT} console=tty1 console=ttyS0"
+    GRUB_TERMINAL=console
+  types:
+  - vm
 
 - path: /etc/sudoers.d/90-incus
   generator: dump
   mode: 0440
   content: |-
-    # User rules for bjk
-    bjk ALL=(ALL) NOPASSWD:ALL
+    # User rules for ubuntu
+    ubuntu ALL=(ALL) NOPASSWD:ALL
   variants:
     - default
 
-- path: /etc/tailscale/pat
-  generator: copy
-  source: /var/home/bjk/.config/blincus/build/sources/tailscale/tailscalekey
-  variants:
-    - default
-    
 packages:
   manager: apt
   update: true
   cleanup: true
   sets:
   - packages:
-    - apt-transport-https
     - fuse
     - language-pack-en
     - openssh-client
-    - openssh-server
-    - build-essential
-    - git
-    - procps
-    - file
-    - curl
-    - wget
     - vim
     action: install
+
   - packages:
-    - tailscale
+    - cloud-init
     action: install
+    variants:
+    - cloud
+
+  - packages:
+    - acpid
+    action: install
+    architectures:
+    - amd64
+    - arm64
+    types:
+    - vm
+
+  - packages:
+    - grub-efi-amd64-signed
+    - shim-signed
+    action: install
+    architectures:
+    - amd64
+    types:
+    - vm
+
+  - packages:
+    - grub-efi-arm64-signed
+    action: install
+    architectures:
+    - arm64
+    types:
+    - vm
+
+  - packages:
+    - shim-signed
+    action: install
+    architectures:
+    - arm64
+    releases:
+    - disco
+    - eoan
+    - focal
+    - groovy
+    - hirsute
+    - impish
+    - jammy
+    types:
+    - vm
+
+  - packages:
+    - linux-virtual
+    action: install
+    releases:
+    - bionic
+    - eoan
+    - focal
+    - groovy
+    - hirsute
+    - impish
+    - jammy
+    types:
+    - vm
+
+  - packages:
+    - os-prober
+    action: remove
+    types:
+    - vm
 
   repositories:
   - name: sources.list
@@ -154,61 +266,6 @@ packages:
     - powerpc64
     - ppc64el
     - riscv64
-  - name: sources.list
-    url: deb https://pkgs.tailscale.com/stable/ubuntu {{ image.release }} main
-    key: |
-      -----BEGIN PGP PUBLIC KEY BLOCK-----
-
-      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
-      =AIVM
-      -----END PGP PUBLIC KEY BLOCK-----
 
 actions:
 - trigger: post-update
@@ -216,9 +273,9 @@ actions:
     #!/bin/sh
     set -eux
 
-    # Create the user account
+    # Create the ubuntu user account
     getent group sudo >/dev/null 2>&1 || groupadd --system sudo
-    useradd --create-home -s /bin/bash -G sudo -U bjk
+    useradd --create-home -s /bin/bash -G sudo -U ubuntu
   variants:
   - default
 
@@ -254,25 +311,21 @@ actions:
 
     # Cleanup temporary shadow paths
     rm /etc/*-
-- trigger: post-packages
+
+- trigger: post-files
   action: |-
     #!/bin/sh
     set -eux
-    # auto join tailscale network
-    (
-    cat << EOF
-    [Unit]
-    Description=Tailscale Join
 
-    [Service]
-    Type=oneshot
-    ExecStart=/usr/bin/tailscale up --authkey=file:/etc/tailscale/pat
+    TARGET="x86_64"
+    [ "$(uname -m)" = "aarch64" ] && TARGET="arm64"
 
-    [Install]
-    WantedBy=default.target
-    EOF
-    ) > /etc/systemd/system/join-tailscale.service
-    systemctl enable join-tailscale.service
+    update-grub
+    grub-install --uefi-secure-boot --target="${TARGET}-efi" --no-nvram --removable
+    update-grub
+    sed -i "s#root=[^ ]*#root=/dev/sda2#g" /boot/grub/grub.cfg
+  types:
+  - vm
 
 mappings:
   architecture_map: debian
