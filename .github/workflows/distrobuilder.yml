@@ -17,10 +17,13 @@ jobs:
       - run: cd distrobuilder
       - run: go env
       - run: make
-      - run: ls -la
+      - run: ls -la /home/runner/go
       - run: go version
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: Adding distrobuilder to path  
+        run: echo "/home/runner/go/bin" >> $GITHUB_PATH
+      - name: Build Incus Image
+        run: |
+          distrobuilder build-incus ubuntunocloud.yaml ubuntunocloud
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
