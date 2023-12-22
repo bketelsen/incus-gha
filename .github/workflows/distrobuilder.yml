@@ -23,7 +23,7 @@ jobs:
         run: echo "/home/runner/go/bin" >> $GITHUB_PATH
       - name: Build Incus Image
         run: |
-          sudo distrobuilder build-incus ubuntunocloud.yaml ubuntunocloud
+          sudo /home/runner/go/bin/distrobuilder build-incus ubuntunocloud.yaml ubuntunocloud
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
