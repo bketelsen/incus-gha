@@ -24,12 +24,12 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           pwd
-          sudo /home/runner/go/bin/distrobuilder build-incus ubuntunocloud.yaml ubuntunocloud
+          sudo /home/runner/go/bin/distrobuilder build-incus ubuntucloud.yaml ubuntucloud
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - uses: actions/upload-artifact@v4
         with:
-          name: ubuntunocloud
-          path: ${{ github.workspace }}/ubuntunocloud/ 
+          name: ubuntucloud
+          path: ${{ github.workspace }}/ubuntucloud/ 
