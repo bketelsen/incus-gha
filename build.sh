@@ -10,7 +10,7 @@ for file in "$source"/*.yaml; do
         echo found "$file"
         outdir=$output/$(basename "$file" .yaml)
         echo "$outdir"
-        sudo distrobuilder build-incus "$file" "$outdir"
+        sudo /home/runner/go/bin/distrobuilder build-incus "$file" "$outdir"
         
     fi
 done
