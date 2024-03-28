@@ -1,5 +1,5 @@
 image:
-  name: ubuntu-disco-x86_64
+  name: ubuntu-jammy-cloud
   distribution: ubuntu
   release: jammy
   variant: cloud

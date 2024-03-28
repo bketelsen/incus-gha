@@ -24,7 +24,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           pwd
-          sudo /home/runner/go/bin/distrobuilder build-incus ubuntucloud.yaml ubuntucloud
+          sudo ./build.sh
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
