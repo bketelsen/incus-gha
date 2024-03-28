@@ -4,7 +4,7 @@ image:
   release: jammy
   variant: cloud
   description: |-
-    Ubuntu {{ image.release }}
+    Custom Ubuntu {{ image.release }}
   architecture: x86_64
 
 source:
